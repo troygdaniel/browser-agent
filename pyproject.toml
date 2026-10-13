@@ -1,0 +1,34 @@
+[project]
+name = "browser-agent"
+version = "0.1.0"
+description = "Local-first AI-powered browser automation platform"
+requires-python = ">=3.12"
+dependencies = [
+    "playwright>=1.40.0",
+    "typer>=0.9.0",
+    "rich>=13.0.0",
+    "aiosqlite>=0.19.0",
+    "pyyaml>=6.0",
+    "httpx>=0.25.0",
+    "pydantic>=2.5.0",
+]
+
+[project.scripts]
+browser-agent = "browser_agent.cli.main:app"
+
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["browser_agent*"]
+exclude = ["configs*", "tests*"]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-asyncio>=0.21.0",
+    "black>=23.0.0",
+    "ruff>=0.1.0",
+]

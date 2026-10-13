@@ -1,0 +1,33 @@
+# Work Profile Configuration
+# For corporate use with security restrictions
+
+profile_name: work
+
+ollama:
+  base_url: http://localhost:11434
+  model: deepseek-coder:6.7b
+  timeout: 120
+
+browser:
+  headless: true  # Headless by default for security
+  max_concurrent_tasks: 2
+  default_timeout: 30
+  screenshot_on_error: true
+
+security:
+  # Restrict to approved domains
+  allowed_domains:
+    - localhost
+    - 127.0.0.1
+    # Add your work domains here:
+    # - internal.company.com
+    # - *.company.com
+
+  restricted_filesystem: true
+  require_confirmation_for_destructive: true
+  audit_logging: true
+
+# Data directories (relative to project root)
+data_dir: ./data/work
+screenshots_dir: ./screenshots/work
+traces_dir: ./traces/work

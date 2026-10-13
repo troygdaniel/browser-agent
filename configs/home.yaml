@@ -1,0 +1,26 @@
+# Home Profile Configuration
+# For personal use with full automation capabilities
+
+profile_name: home
+
+ollama:
+  base_url: http://localhost:11434
+  model: deepseek-coder:6.7b
+  timeout: 120
+
+browser:
+  headless: false  # Show browser by default
+  max_concurrent_tasks: 3
+  default_timeout: 30
+  screenshot_on_error: true
+
+security:
+  allowed_domains: null  # No restrictions
+  restricted_filesystem: false
+  require_confirmation_for_destructive: true
+  audit_logging: false
+
+# Data directories (relative to project root)
+data_dir: ./data/home
+screenshots_dir: ./screenshots/home
+traces_dir: ./traces/home
