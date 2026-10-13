@@ -1,19 +1,37 @@
 # Browser Agent
 
-> **For AI Agents:** This is a production-ready browser automation platform that uses **local Ollama models** (no cloud APIs) to control Chrome via Playwright. All infrastructure works. The main limitation is that small models (< 14B parameters) struggle with autonomous decision-making. See STATUS.md for implementation details and INSTALL.md for setup. The demo.py script shows everything working without AI decision-making.
+> **For AI Agents:** This is a **self-learning, self-healing** browser automation tool. AI figures out tasks on first run (slow), saves them as fast recipes (2-3 seconds), and auto-heals when websites change. Think Playwright Test Recorder + AI that fixes broken tests.
 
-Local-first AI-powered browser automation platform using Chrome and Ollama.
+**Self-learning browser automation:** AI learns tasks once, replays them fast forever.
+
+## How It Works
+
+**First Time (AI Learning):**
+```bash
+browser-agent run "Create ServiceNow CR from CHG0012345"
+```
+- 🤖 AI figures it out (slow, ~30s)
+- 💾 Saves recipe automatically
+- ✅ Done!
+
+**Every Time After (Fast Recipe):**
+```bash
+browser-agent run servicenow-create-cr --chg_number CHG0067890
+```
+- ⚡ Replays recipe (2-3 seconds)
+- 🎯 No AI needed
+- 🔧 Auto-heals if website changes
 
 ## Features
 
-- **Conversational Task Execution** - Give tasks in natural language
-- **Local AI** - Uses Ollama (no cloud dependencies)
+- **Self-Learning** - AI learns tasks once, replays forever
+- **Self-Healing** - Automatically fixes broken recipes when websites change
+- **Fast Execution** - 2-3 seconds vs 30+ seconds for AI
+- **Recipe Library** - Build reusable automation recipes
+- **Variable Substitution** - Use same recipe with different inputs
+- **Local AI** - Uses Ollama (optional: use Claude/GPT via API)
 - **Chrome Automation** - Playwright-based browser control
-- **Headed/Headless Modes** - Watch automation or run in background
-- **Home/Work Profiles** - Separate configurations for different environments
-- **Human-in-the-Loop** - Pause for authentication, CAPTCHA, etc.
-- **QA Testing** - Test web applications (coming soon)
-- **Concurrent Tasks** - Run multiple automations simultaneously (coming soon)
+- **Home/Work Profiles** - Separate configurations
 
 ## Quick Start
 

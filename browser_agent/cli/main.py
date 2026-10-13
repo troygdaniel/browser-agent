@@ -11,24 +11,30 @@ from rich.table import Table
 
 from ..browser.manager import BrowserManager
 from ..agent.ollama import OllamaClient
-from ..agent.executor import AgentExecutor
+from ..agent.smart_executor import SmartExecutor
 from ..tasks.models import Task
 from ..config.profiles import load_config
+from ..recipes.storage import RecipeStorage
 
-app = typer.Typer(help="Browser Agent - Local AI-powered browser automation")
+app = typer.Typer(help="Browser Agent - Self-learning browser automation")
 console = Console()
+
+# Add recipe management subcommand
+from . import recipes
+app.add_typer(recipes.app, name="recipe")
 
 
 @app.command()
 def run(
-    task: str = typer.Argument(..., help="Task description in natural language"),
+    task: str = typer.Argument(..., help="Task description or recipe name"),
     url: Optional[str] = typer.Option(None, "--url", help="Starting URL"),
     headed: bool = typer.Option(False, "--headed", help="Run browser in visible mode"),
     headless: bool = typer.Option(False, "--headless", help="Run browser in headless mode"),
     profile: str = typer.Option("home", "--profile", help="Configuration profile (home/work)"),
     max_steps: int = typer.Option(30, "--max-steps", help="Maximum steps before stopping"),
+    force_ai: bool = typer.Option(False, "--force-ai", help="Force AI mode even if recipe exists"),
 ):
-    """Run a browser automation task."""
+    """Run a browser automation task (AI learns on first run, uses recipe on subsequent runs)."""
 
     # Determine headless mode
     if headed:
@@ -43,11 +49,22 @@ def run(
     config = load_config(profile)
     config.browser.headless = headless_mode
 
+    # Parse variables from task (e.g., "recipe-name --var value" becomes variables)
+    # For now, just pass the task string
+    variables = {}  # Will parse from additional options later
+
     # Run async task
-    asyncio.run(_run_task(task, url, config, max_steps))
+    asyncio.run(_run_task(task, url, config, max_steps, force_ai, variables))
 
 
-async def _run_task(task_description: str, start_url: Optional[str], config, max_steps: int):
+async def _run_task(
+    task_description: str,
+    start_url: Optional[str],
+    config,
+    max_steps: int,
+    force_ai: bool,
+    variables: dict,
+):
     """Execute the browser automation task."""
 
     # Create task object
@@ -97,21 +114,22 @@ async def _run_task(task_description: str, start_url: Optional[str], config, max
             await session.navigate(start_url)
             console.print("[green]✓ Page loaded[/green]")
 
-        # Create executor
+        # Create smart executor (uses recipes when available)
         screenshots_dir = config.screenshots_dir / task_obj.id
         screenshots_dir.mkdir(parents=True, exist_ok=True)
 
-        executor = AgentExecutor(
+        executor = SmartExecutor(
             session=session,
             ollama=ollama,
             max_steps=max_steps,
             screenshots_dir=screenshots_dir,
+            recipes_dir=Path("recipes"),
         )
 
-        # Execute task
+        # Execute task (AI learns or uses recipe)
         console.print("\n[bold yellow]Executing task...[/bold yellow]")
 
-        result = await executor.execute_task(task_description)
+        result = await executor.execute_task(task_description, variables, force_ai)
 
         # Display results
         console.print("\n" + "="*60)
