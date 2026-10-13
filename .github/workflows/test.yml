@@ -1,0 +1,38 @@
+# GitHub Actions workflow for basic testing
+name: Test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e .
+
+    - name: Check imports
+      run: |
+        python -c "from browser_agent import __version__; print(f'Version: {__version__}')"
+
+    - name: Verify package structure
+      run: |
+        python -c "from browser_agent.browser import BrowserManager"
+        python -c "from browser_agent.agent import OllamaClient"
+        python -c "from browser_agent.tasks import Task"
+
+    # Note: Can't test actual browser automation in CI without Ollama/Chrome
+    # But we can verify the package structure is valid
