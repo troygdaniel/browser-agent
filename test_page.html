@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Page for Browser Agent</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        .search-box {
+            margin: 20px 0;
+        }
+        input[type="text"] {
+            padding: 10px;
+            width: 300px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            display: none;
+        }
+        .links {
+            margin-top: 30px;
+        }
+        a {
+            display: block;
+            margin: 10px 0;
+            color: #1a73e8;
+        }
+    </style>
+</head>
+<body>
+    <h1>Browser Agent Test Page</h1>
+
+    <p>This is a simple test page for browser automation.</p>
+
+    <div class="search-box">
+        <h2>Search Test</h2>
+        <input type="text" id="searchInput" placeholder="Enter search query">
+        <button id="searchButton">Search</button>
+        <div id="result"></div>
+    </div>
+
+    <div class="links">
+        <h2>Navigation Links</h2>
+        <a href="https://www.python.org">Python Official Site</a>
+        <a href="https://example.com">Example Domain</a>
+        <a href="#about">About Section</a>
+    </div>
+
+    <div id="about" style="margin-top: 50px;">
+        <h2>About</h2>
+        <p>This page is used for testing browser automation capabilities.</p>
+    </div>
+
+    <script>
+        document.getElementById('searchButton').addEventListener('click', function() {
+            const query = document.getElementById('searchInput').value;
+            const resultDiv = document.getElementById('result');
+
+            if (query) {
+                resultDiv.textContent = 'Search results for: ' + query;
+                resultDiv.style.display = 'block';
+            } else {
+                resultDiv.textContent = 'Please enter a search query';
+                resultDiv.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
