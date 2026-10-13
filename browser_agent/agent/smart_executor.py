@@ -84,10 +84,10 @@ class SmartExecutor:
     ) -> dict:
         """Execute with AI and record steps as recipe."""
 
-        # Create recorder
-        recorder = RecipeRecorder(task_description)
+        # Create AI executor with modified behavior to track actions
+        from .executor import AgentExecutor
+        from .actions import Action
 
-        # Create AI executor
         executor = AgentExecutor(
             session=self.session,
             ollama=self.ollama,
@@ -95,31 +95,36 @@ class SmartExecutor:
             screenshots_dir=self.screenshots_dir,
         )
 
-        # Execute and record
+        # Monkey-patch executor to capture actions
+        recorder = RecipeRecorder(task_description)
+        original_execute_action = executor._execute_action
+
+        async def recording_execute_action(action: Action) -> bool:
+            result = await original_execute_action(action)
+            if result:  # Only record successful actions
+                recorder.record_action(action, success=True)
+            return result
+
+        executor._execute_action = recording_execute_action
+
+        # Execute with AI
         result = await executor.execute_task(task_description)
 
-        # If successful, record the steps
-        if result["success"]:
-            # Get actions from executor history
-            for i, action_desc in enumerate(executor.action_history):
-                # Reconstruct action from description
-                # This is a simplified version - we'll improve this
-                # For now, we'll prompt the user to save
-                pass
-
-            # Generate recipe (will be improved to use actual recorded actions)
+        # If successful and has multiple steps, save recipe
+        if result["success"] and result["steps"] >= 2:
             recipe = recorder.generate_recipe()
 
-            # Ask user if they want to save
             print(f"\n  ✅ Task completed successfully in {result['steps']} steps!")
-            print(f"\n  💾 Save this as a recipe for faster future execution?")
+            print(f"\n  💾 Saving as recipe for faster future execution...")
             print(f"     Name: {recipe.name}")
             print(f"     Slug: {recipe.slug}")
 
-            # For now, auto-save (we'll add prompts later)
-            if result["steps"] >= 2:  # Only save if multiple steps
-                self.storage.save(recipe)
-                print(f"  ✅ Recipe saved! Next time run: browser-agent run {recipe.slug}")
+            self.storage.save(recipe)
+            print(f"  ✅ Recipe saved! Next time run: browser-agent run {recipe.slug}")
+
+            if recipe.variables:
+                vars_example = " ".join([f"--{v.name} {v.example}" for v in recipe.variables])
+                print(f"     With variables: browser-agent run {recipe.slug} {vars_example}")
 
         return result
 
