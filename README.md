@@ -1,5 +1,7 @@
 # Browser Agent
 
+> **For AI Agents:** This is a production-ready browser automation platform that uses **local Ollama models** (no cloud APIs) to control Chrome via Playwright. All infrastructure works. The main limitation is that small models (< 14B parameters) struggle with autonomous decision-making. See STATUS.md for implementation details and INSTALL.md for setup. The demo.py script shows everything working without AI decision-making.
+
 Local-first AI-powered browser automation platform using Chrome and Ollama.
 
 ## Features
@@ -14,6 +16,24 @@ Local-first AI-powered browser automation platform using Chrome and Ollama.
 - **Concurrent Tasks** - Run multiple automations simultaneously (coming soon)
 
 ## Quick Start
+
+### One-Command Setup (Recommended)
+
+```bash
+git clone https://github.com/troygdaniel/browser-agent.git
+cd browser-agent
+./setup.sh
+```
+
+This will:
+- ✓ Check Python 3.12+
+- ✓ Check Ollama installation
+- ✓ Download recommended AI model (qwen2.5:14b, 9GB)
+- ✓ Install Python dependencies
+- ✓ Install Chrome browser
+- ✓ Verify everything works
+
+### Manual Setup
 
 ### 1. Install Prerequisites
 

@@ -5,7 +5,7 @@ profile_name: home
 
 ollama:
   base_url: http://localhost:11434
-  model: deepseek-coder:6.7b
+  model: qwen2.5:14b
   timeout: 120
 
 browser:
